@@ -1,0 +1,27 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- checkout: self
+
+# Install JMeter
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y jmeter
+  displayName: 'Install JMeter'
+
+# Run JMeter Test
+- script: |
+    mkdir -p results
+    jmeter -n -t "Assignment 2 Non Functional Testing.jmx" -l results/results.jtl -e -o results/report
+  displayName: 'Run JMeter Test'
+
+# Publish HTML Report
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'results/report'
+    ArtifactName: 'JMeterReport'
+    publishLocation: 'Container'
